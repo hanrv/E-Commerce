@@ -26,32 +26,32 @@ while (opcionElegida != "0")
         break;
     }
     Console.WriteLine("Ingrese la cantidad a comprar: ");
-    //double cantCompra = Convert.ToDouble(Console.ReadLine());
+    double cantidadProductos = Convert.ToDouble(Console.ReadLine());
     switch (opcionElegida)
     {
         case "Hamburguesa":
-            montoTotal += precHamburguesa;
-            historialPedidos += "- Hamburguesa: S/" + precHamburguesa + "\n";
+            montoTotal += precHamburguesa * cantidadProductos;
+            historialPedidos += "(" + cantidadProductos + ") Hamburguesa: S/" + precHamburguesa * cantidadProductos + "\n";
             break;
         case "Empanada":    
-            montoTotal += precEmpanada;
-            historialPedidos += "- Empanada: S/" + precEmpanada + "\n";
+            montoTotal += precEmpanada * cantidadProductos;
+            historialPedidos += "(" + cantidadProductos + ") Empanada: S/" + precEmpanada * cantidadProductos + "\n";
             break;
         case "Fanta":                                           
-            montoTotal += precFanta;
-            historialPedidos += "- Fanta: S/" + precFanta + "\n";
+            montoTotal += precFanta * cantidadProductos;
+            historialPedidos += "(" + cantidadProductos + ") Fanta: S/" + precFanta * cantidadProductos + "\n";
             break;
         case "Frugos":
-            montoTotal += precFrugos;
-            historialPedidos += "- Frugos: S/" + precFrugos + "\n";
+            montoTotal += precFrugos * cantidadProductos;
+            historialPedidos += "(" + cantidadProductos + ") Frugos: S/" + precFrugos * cantidadProductos + "\n";
             break;
         case "Cuates":
-            montoTotal += precCuates;
-            historialPedidos += "- Cuates: S/" + precCuates + "\n";
+            montoTotal += precCuates * cantidadProductos;
+            historialPedidos += "(" + cantidadProductos + ") Cuates: S/" + precCuates * cantidadProductos + "\n";
             break;
         case "Chetos":
-            montoTotal += precChetos;
-            historialPedidos += "- Chetos: S/" + precChetos + "\n";
+            montoTotal += precChetos * cantidadProductos;
+            historialPedidos += "(" + cantidadProductos + ") Chetos: S/" + precChetos * cantidadProductos + "\n";
             break;
         default:
             Console.WriteLine("Ingrese un producto valido");
@@ -59,7 +59,7 @@ while (opcionElegida != "0")
     }
 
     Console.WriteLine("\nCarrito de compras:");
-    Console.WriteLine("Monto acumulado: " + montoTotal);
+    Console.WriteLine("Monto acumulado: S/" + montoTotal);
 
     if(historialPedidos == "") {
         Console.WriteLine("No compraste nada");
