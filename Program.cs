@@ -1,5 +1,5 @@
 ﻿
-
+// prueba c#
 using System.Collections.Specialized;
 
 double precHamburguesa = 8.50, precEmpanada = 5.50;
