@@ -26,7 +26,7 @@ while (opcionElegida != "0")
         break;
     }
     Console.WriteLine("Ingrese la cantidad a comprar: ");
-    double cantCompra = Convert.ToDouble(Console.ReadLine());
+    //double cantCompra = Convert.ToDouble(Console.ReadLine());
     switch (opcionElegida)
     {
         case "Hamburguesa":
