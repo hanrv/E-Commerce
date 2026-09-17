@@ -1,6 +1,4 @@
-﻿
-// prueba c#
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 
 double precHamburguesa = 8.50, precEmpanada = 5.50;
 double precFanta = 2.5, precFrugos = 3.0;
