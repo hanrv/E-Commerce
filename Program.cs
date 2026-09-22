@@ -1,39 +1,50 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ConsoleApp_07_09_2026.Clases;
+using ConsoleApp_07_09_2026.Interfaces;
 
 namespace ConsoleApp_07_09_2026
 {
+    /// <summary>
+    /// Programa principal que gestiona el carrito de compras.
+    /// PRINCIPIO DIP (Dependency Inversion Principle): Depende de interfaces (ILectorConsola, IProductoFactory, IPago)
+    /// y no de clases concretas, permitiendo cambios sin modificar este codigo.
+    /// PRINCIPIO OCP (Open/Closed Principle): Puede agregar nuevos tipos de pago o productos sin cambiar este codigo.
+    /// </summary>
     internal class Program
     {
         static void Main(string[] args)
         {
+            // PRINCIPIO DIP: Se inyectan las dependencias
+            var lectorConsola = new LectorConsola();
+            var productoFactory = new ProductoFactory();
+
             List<Producto> carrito = new List<Producto>();
             string opcionElegida = "";
 
             while (opcionElegida != "0")
             {
-                Console.WriteLine("\n======= MENU ======");
-                Console.WriteLine("Catalogo de productos:");
-                Console.WriteLine("- Comidas: Hamburguesa(S/8.50), Empanada(S/5.50)");
-                Console.WriteLine("- Bebidas: Fanta(S/2.50), Frugos(S/3.00)");
-                Console.WriteLine("- Snacks: Cuates(S/1.00), Chetos(S/1.20)");
-                Console.WriteLine("Ingresa el producto a comprar:");
-                Console.WriteLine("Para salir y pagar presione 0");
+                lectorConsola.EscribirLinea("\n======= MENU =======");
+                lectorConsola.EscribirLinea("Catalogo de productos:");
+                lectorConsola.EscribirLinea("- Comidas: Hamburguesa(S/8.50), Empanada(S/5.50)");
+                lectorConsola.EscribirLinea("- Bebidas: Fanta(S/2.50), Frugos(S/3.00)");
+                lectorConsola.EscribirLinea("- Snacks: Cuates(S/1.00), Chetos(S/1.20)");
+                lectorConsola.EscribirLinea("Ingresa el producto a comprar:");
+                lectorConsola.EscribirLinea("Para salir y pagar presione 0");
 
-                opcionElegida = Console.ReadLine().Trim().ToLower();
+                opcionElegida = lectorConsola.LeerLinea().Trim().ToLower();
 
                 if (opcionElegida == "0")
                 {
                     break;
                 }
 
-                Console.WriteLine("Ingrese la cantidad a comprar: ");
-                int cantidad = Convert.ToInt32(Console.ReadLine());
+                lectorConsola.EscribirLinea("Ingrese la cantidad a comprar: ");
+                int cantidad = (int)lectorConsola.LeerDecimal();
 
                 if (cantidad <= 0)
                 {
-                    Console.WriteLine("La cantidad debe ser mayor a 0.");
+                    lectorConsola.EscribirLinea("La cantidad debe ser mayor a 0.");
                     continue;
                 }
 
@@ -44,60 +55,40 @@ namespace ConsoleApp_07_09_2026
                     {
                         item.Cantidad += cantidad;
                         encontrado = true;
-                        Console.WriteLine("Se sumó la cantidad al producto existente.");
+                        lectorConsola.EscribirLinea("Se sumo la cantidad al producto existente.");
                         break;
                     }
                 }
 
                 if (!encontrado)
                 {
-                    Producto nuevoProducto = null;
-
-                    switch (opcionElegida)
-                    {
-                        case "hamburguesa":
-                            nuevoProducto = new Comida("Hamburguesa", 8.50m, cantidad, true);
-                            break;
-                        case "empanada":
-                            nuevoProducto = new Comida("Empanada", 5.50m, cantidad, true);
-                            break;
-                        case "fanta":
-                            nuevoProducto = new Bebida("Fanta", 2.50m, cantidad, 500);
-                            break;
-                        case "frugos":
-                            nuevoProducto = new Bebida("Frugos", 3.00m, cantidad, 300);
-                            break;
-                        case "cuates":
-                            nuevoProducto = new Snack("Cuates", 1.00m, cantidad, 45);
-                            break;
-                        case "chetos":
-                            nuevoProducto = new Snack("Chetos", 1.20m, cantidad, 38);
-                            break;
-                        default:
-                            Console.WriteLine("Ingrese un producto valido.");
-                            break;
-                    }
+                    // PRINCIPIO OCP: La creacion de productos es delegada a la Factory
+                    Producto nuevoProducto = productoFactory.CrearProducto(opcionElegida, cantidad);
 
                     if (nuevoProducto != null)
                     {
                         carrito.Add(nuevoProducto);
                     }
+                    else
+                    {
+                        lectorConsola.EscribirLinea("Ingrese un producto valido.");
+                    }
                 }
 
                 decimal subtotalAcumulado = 0;
-                Console.WriteLine("\n==============================");
-                Console.WriteLine("     CARRITO DE COMPRAS       ");
-                Console.WriteLine("==============================");
+                lectorConsola.EscribirLinea("\n==============================");
+                lectorConsola.EscribirLinea("     CARRITO DE COMPRAS       ");
+                lectorConsola.EscribirLinea("==============================");
 
                 foreach (Producto item in carrito)
                 {
-                    Console.WriteLine(item.ObtenerDetalle());
+                    lectorConsola.EscribirLinea(item.ObtenerDetalle());
                     subtotalAcumulado += item.CalcularSubtotal();
                 }
 
-                Console.WriteLine("------------------------------");
-                Console.WriteLine($"Total acumulado: S/{subtotalAcumulado:F2}");
-                Console.WriteLine("==============================");
+                lectorConsola.EscribirLinea("------------------------------");
+                lectorConsola.EscribirLinea($"Total acumulado: S/{subtotalAcumulado:F2}");
+                lectorConsola.EscribirLinea("==============================");
             }
 
             if (carrito.Count > 0)
@@ -108,25 +99,26 @@ namespace ConsoleApp_07_09_2026
                     totalFinal += item.CalcularSubtotal();
                 }
 
-                Console.WriteLine("\nSeleccione el método de pago:");
-                Console.WriteLine("1. Efectivo");
-                Console.WriteLine("2. Tarjeta");
-                Console.Write("Opción: ");
-                string metodo = Console.ReadLine().Trim();
+                lectorConsola.EscribirLinea("\nSeleccione el metodo de pago:");
+                lectorConsola.EscribirLinea("1. Efectivo");
+                lectorConsola.EscribirLinea("2. Tarjeta");
+                lectorConsola.Escribir("Opcion: ");
+                string metodo = lectorConsola.LeerLinea().Trim();
 
+                // PRINCIPIO DIP: Se crea la forma de pago inyectando la dependencia
                 IPago formaDePago = null;
 
                 if (metodo == "1")
                 {
-                    formaDePago = new PagoEfectivo();
+                    formaDePago = new PagoEfectivo(lectorConsola);
                 }
                 else if (metodo == "2")
                 {
-                    formaDePago = new PagoTarjeta();
+                    formaDePago = new PagoTarjeta(lectorConsola);
                 }
                 else
                 {
-                    Console.WriteLine("Método inválido.");
+                    lectorConsola.EscribirLinea("Metodo invalido.");
                     return;
                 }
 
@@ -134,12 +126,12 @@ namespace ConsoleApp_07_09_2026
 
                 if (exito)
                 {
-                    Console.WriteLine("\n¡Compra finalizada exitosamente!");
+                    lectorConsola.EscribirLinea("\n!Compra finalizada exitosamente!");
                 }
             }
             else
             {
-                Console.WriteLine("No se realizaron compras.");
+                lectorConsola.EscribirLinea("No se realizaron compras.");
             }
         }
     }

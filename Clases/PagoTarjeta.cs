@@ -1,22 +1,34 @@
-﻿using System;
+﻿using ConsoleApp_07_09_2026.Interfaces;
 
 namespace ConsoleApp_07_09_2026.Clases
 {
+    /// <summary>
+    /// Procesa pagos con tarjeta de crédito.
+    /// PRINCIPIO DIP (Dependency Inversion Principle): Depende de ILectorConsola, no de Console directamente.
+    /// Esto permite cambiar la fuente de entrada sin modificar esta clase.
+    /// </summary>
     public class PagoTarjeta : IPago
     {
+        private readonly ILectorConsola _lectorConsola;
+
+        public PagoTarjeta(ILectorConsola lectorConsola)
+        {
+            _lectorConsola = lectorConsola;
+        }
+
         public bool ProcesarPago(decimal monto)
         {
-            Console.WriteLine($"\nMonto a cobrar en tarjeta: S/{monto:F2}");
-            Console.Write("Ingrese los 16 dígitos de su tarjeta: ");
-            string tarjeta = Console.ReadLine();
+            _lectorConsola.EscribirLinea($"\nMonto a cobrar en tarjeta: S/{monto:F2}");
+            _lectorConsola.Escribir("Ingrese los 16 dígitos de su tarjeta: ");
+            string tarjeta = _lectorConsola.LeerLinea();
 
             if (tarjeta.Length == 16)
             {
-                Console.WriteLine("Conectando con el banco... ¡Cobro aprobado!");
+                _lectorConsola.EscribirLinea("Conectando con el banco... ¡Cobro aprobado!");
                 return true;
             }
 
-            Console.WriteLine("Número de tarjeta inválido.");
+            _lectorConsola.EscribirLinea("Número de tarjeta inválido.");
             return false;
         }
     }
