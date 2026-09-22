@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ConsoleApp_07_09_2026.Clases
 {
-    internal class Producto
+    public abstract class Producto : IProducto
     {
         private string _nombre;
         public string Nombre
         {
             get { return _nombre; }
-
             set { _nombre = value; }
         }
 
@@ -18,12 +15,12 @@ namespace ConsoleApp_07_09_2026.Clases
         public decimal Precio
         {
             get { return _precio; }
-            set {
+            set
+            {
                 if (value < 0)
                 {
-                    Console.WriteLine("Ingrese un precio mayor que 0. Se aginara el valor de 0");
+                    Console.WriteLine("El precio no puede ser negativo. Se asignará 0.");
                     _precio = 0;
-                    return;
                 }
                 else
                 {
@@ -40,28 +37,29 @@ namespace ConsoleApp_07_09_2026.Clases
             {
                 if (value < 0)
                 {
-                    Console.WriteLine("Ingrese una cantidad mayor que 0. Se aginara el valor de 0");
+                    Console.WriteLine("La cantidad no puede ser negativa. Se asignará 0.");
                     _cantidad = 0;
-                    return;
                 }
                 else
                 {
                     _cantidad = value;
                 }
-
             }
         }
 
-        public Producto(string nombre, decimal precio, int cantidad)
+        protected Producto(string nombre, decimal precio, int cantidad)
         {
             Nombre = nombre;
             Precio = precio;
             Cantidad = cantidad;
         }
 
-        public decimal calcularSubtotal()
+        public virtual decimal CalcularSubtotal()
         {
             return Precio * Cantidad;
         }
+
+        // Obliga a las clases hijas a definir cómo mostrar su propio detalle
+        public abstract string ObtenerDetalle();
     }
 }

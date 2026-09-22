@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ConsoleApp_07_09_2026.Clases;
 
 namespace ConsoleApp_07_09_2026
@@ -7,9 +8,8 @@ namespace ConsoleApp_07_09_2026
     {
         static void Main(string[] args)
         {
-            decimal montoTotal = 0;
+            List<IProducto> carrito = new List<IProducto>();
             string opcionElegida = "";
-            string historialPedidos = "";
 
             while (opcionElegida != "0")
             {
@@ -20,7 +20,8 @@ namespace ConsoleApp_07_09_2026
                 Console.WriteLine("- Snacks: Cuates(S/1.00), Chetos(S/1.20)");
                 Console.WriteLine("Ingresa el producto a comprar:");
                 Console.WriteLine("Para salir presione 0");
-                opcionElegida = Console.ReadLine();
+
+                opcionElegida = Console.ReadLine().ToLower();
 
                 if (opcionElegida == "0")
                 {
@@ -28,62 +29,77 @@ namespace ConsoleApp_07_09_2026
                     break;
                 }
 
-                decimal precioUnitario = 0;
-                bool productoValido = true;
+                Console.WriteLine("Ingrese la cantidad a comprar: ");
+                int cantidad = Convert.ToInt32(Console.ReadLine());
 
-                switch (opcionElegida)
+                if (cantidad <= 0)
                 {
-                    case "Hamburguesa":
-                        precioUnitario = 8.50m;
-                        break;
-                    case "Empanada":
-                        precioUnitario = 5.50m;
-                        break;
-                    case "Fanta":
-                        precioUnitario = 2.50m;
-                        break;
-                    case "Frugos":
-                        precioUnitario = 3.00m;
-                        break;
-                    case "Cuates":
-                        precioUnitario = 1.00m;
-                        break;
-                    case "Chetos":
-                        precioUnitario = 1.20m;
-                        break;
-                    default:
-                        Console.WriteLine("Ingrese un producto valido.");
-                        productoValido = false;
-                        break;
-                }
-
-                if (!productoValido)
-                {
+                    Console.WriteLine("La cantidad debe ser mayor a 0.");
                     continue;
                 }
 
-                Console.WriteLine("Ingrese la cantidad a comprar: ");
-                int cantidadProductos = Convert.ToInt32(Console.ReadLine());
+                bool encontrado = false;
 
-                Producto pedidoActual = new Producto(opcionElegida, precioUnitario, cantidadProductos);
-
-                decimal subtotal = pedidoActual.calcularSubtotal();
-                montoTotal += subtotal;
-                historialPedidos += "(" + pedidoActual.Cantidad + ") " + pedidoActual.Nombre + ": S/" + subtotal + "\n";
-
-                Console.WriteLine("\nCarrito de compras:");
-                Console.WriteLine("Monto acumulado: S/" + montoTotal);
-
-                if (historialPedidos == "")
+                foreach (IProducto item in carrito)
                 {
-                    Console.WriteLine("No compraste nada");
+                    if (item.Nombre.ToLower() == opcionElegida)
+                    {
+                        item.Cantidad += cantidad;
+                        encontrado = true;
+                        Console.WriteLine("Se agrego cantidad al producto existente.");
+                        break;
+                    }
                 }
-                else
+
+                if (!encontrado)
                 {
-                    Console.WriteLine("---------------------");
-                    Console.WriteLine("Historial de Pedidos");
-                    Console.WriteLine(historialPedidos);
+                    IProducto nuevoProducto = null;
+
+                    switch (opcionElegida)
+                    {
+                        case "hamburguesa":
+                            nuevoProducto = new Comida("Hamburguesa", 8.50m, cantidad, true);
+                            break;
+                        case "empanada":
+                            nuevoProducto = new Comida("Empanada", 5.50m, cantidad, true);
+                            break;
+                        case "fanta":
+                            nuevoProducto = new Bebida("Fanta", 2.50m, cantidad, 500);
+                            break;
+                        case "frugos":
+                            nuevoProducto = new Bebida("Frugos", 3.00m, cantidad, 300);
+                            break;
+                        case "cuates":
+                            nuevoProducto = new Snack("Cuates", 1.00m, cantidad, 45);
+                            break;
+                        case "chetos":
+                            nuevoProducto = new Snack("Chetos", 1.20m, cantidad, 38);
+                            break;
+                        default:
+                            Console.WriteLine("Ingrese un producto valido.");
+                            break;
+                    }
+
+                    if (nuevoProducto != null)
+                    {
+                        carrito.Add(nuevoProducto);
+                    }
                 }
+
+                decimal total = 0;
+                Console.WriteLine("\n==============================");
+                Console.WriteLine("     CARRITO DE COMPRAS       ");
+                Console.WriteLine("==============================");
+
+                foreach (IProducto item in carrito)
+                {
+                    Console.WriteLine(item.ObtenerDetalle());
+                    total += item.CalcularSubtotal();
+                }
+
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("Total acumulado: S/" + total);
+                Console.WriteLine("==============================");
             }
         }
     }
