@@ -2,7 +2,7 @@
 
 namespace ConsoleApp_07_09_2026.Clases
 {
-    public abstract class Producto : IProducto
+    public class Producto
     {
         private string _nombre;
         public string Nombre
@@ -47,19 +47,21 @@ namespace ConsoleApp_07_09_2026.Clases
             }
         }
 
-        protected Producto(string nombre, decimal precio, int cantidad)
+        public Producto(string nombre, decimal precio, int cantidad)
         {
             Nombre = nombre;
             Precio = precio;
             Cantidad = cantidad;
         }
 
-        public virtual decimal CalcularSubtotal()
+        public decimal CalcularSubtotal()
         {
             return Precio * Cantidad;
         }
 
-        // Obliga a las clases hijas a definir cómo mostrar su propio detalle
-        public abstract string ObtenerDetalle();
+        public virtual string ObtenerDetalle()
+        {
+            return $"({Cantidad}) {Nombre} -> Subtotal: S/{CalcularSubtotal():F2}";
+        }
     }
 }
