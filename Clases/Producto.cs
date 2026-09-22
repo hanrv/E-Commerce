@@ -1,7 +1,14 @@
-﻿using System;
+using ConsoleApp_07_09_2026.Interfaces;
 
 namespace ConsoleApp_07_09_2026.Clases
 {
+    /// <summary>
+    /// Clase que representa un producto genérico.
+    /// PRINCIPIO SRP (Single Responsibility Principle): Producto solo gestiona los datos del producto.
+    /// La validación está delegada a IValidador (inyectado en las propiedades).
+    /// PRINCIPIO LSP (Liskov Substitution Principle): Subclases pueden reemplazar esta clase
+    /// sin romper el contrato (ObtenerDetalle es virtual para permitir extensión).
+    /// </summary>
     public class Producto
     {
         private string _nombre;
@@ -12,15 +19,16 @@ namespace ConsoleApp_07_09_2026.Clases
         }
 
         private decimal _precio;
+        private readonly IValidador _validadorPrecio;
+
         public decimal Precio
         {
             get { return _precio; }
             set
             {
-                if (value < 0)
+                if (!_validadorPrecio.EsValido(value))
                 {
-                    Console.WriteLine("El precio no puede ser negativo. Se asignará 0.");
-                    _precio = 0;
+                    _precio = _validadorPrecio.ObtenerValorCorregido(value);
                 }
                 else
                 {
@@ -30,15 +38,16 @@ namespace ConsoleApp_07_09_2026.Clases
         }
 
         private int _cantidad;
+        private readonly IValidador _validadorCantidad;
+
         public int Cantidad
         {
             get { return _cantidad; }
             set
             {
-                if (value < 0)
+                if (!_validadorCantidad.EsValido(value))
                 {
-                    Console.WriteLine("La cantidad no puede ser negativa. Se asignará 0.");
-                    _cantidad = 0;
+                    _cantidad = (int)_validadorCantidad.ObtenerValorCorregido(value);
                 }
                 else
                 {
@@ -49,6 +58,10 @@ namespace ConsoleApp_07_09_2026.Clases
 
         public Producto(string nombre, decimal precio, int cantidad)
         {
+            // PRINCIPIO SRP: Los validadores son inyectados/creados, separando la lógica de validación
+            _validadorPrecio = new ValidadorProducto("precio", 0);
+            _validadorCantidad = new ValidadorProducto("cantidad", 0);
+
             Nombre = nombre;
             Precio = precio;
             Cantidad = cantidad;
