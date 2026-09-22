@@ -8,7 +8,7 @@ namespace ConsoleApp_07_09_2026
     {
         static void Main(string[] args)
         {
-            List<IProducto> carrito = new List<IProducto>();
+            List<Producto> carrito = new List<Producto>();
             string opcionElegida = "";
 
             while (opcionElegida != "0")
@@ -19,13 +19,12 @@ namespace ConsoleApp_07_09_2026
                 Console.WriteLine("- Bebidas: Fanta(S/2.50), Frugos(S/3.00)");
                 Console.WriteLine("- Snacks: Cuates(S/1.00), Chetos(S/1.20)");
                 Console.WriteLine("Ingresa el producto a comprar:");
-                Console.WriteLine("Para salir presione 0");
+                Console.WriteLine("Para salir y pagar presione 0");
 
-                opcionElegida = Console.ReadLine().ToLower();
+                opcionElegida = Console.ReadLine().Trim().ToLower();
 
                 if (opcionElegida == "0")
                 {
-                    Console.WriteLine("Salida exitosa.");
                     break;
                 }
 
@@ -39,21 +38,20 @@ namespace ConsoleApp_07_09_2026
                 }
 
                 bool encontrado = false;
-
-                foreach (IProducto item in carrito)
+                foreach (Producto item in carrito)
                 {
                     if (item.Nombre.ToLower() == opcionElegida)
                     {
                         item.Cantidad += cantidad;
                         encontrado = true;
-                        Console.WriteLine("Se agrego cantidad al producto existente.");
+                        Console.WriteLine("Se sumó la cantidad al producto existente.");
                         break;
                     }
                 }
 
                 if (!encontrado)
                 {
-                    IProducto nuevoProducto = null;
+                    Producto nuevoProducto = null;
 
                     switch (opcionElegida)
                     {
@@ -86,20 +84,62 @@ namespace ConsoleApp_07_09_2026
                     }
                 }
 
-                decimal total = 0;
+                decimal subtotalAcumulado = 0;
                 Console.WriteLine("\n==============================");
                 Console.WriteLine("     CARRITO DE COMPRAS       ");
                 Console.WriteLine("==============================");
 
-                foreach (IProducto item in carrito)
+                foreach (Producto item in carrito)
                 {
                     Console.WriteLine(item.ObtenerDetalle());
-                    total += item.CalcularSubtotal();
+                    subtotalAcumulado += item.CalcularSubtotal();
                 }
 
                 Console.WriteLine("------------------------------");
-                Console.WriteLine("Total acumulado: S/" + total);
+                Console.WriteLine($"Total acumulado: S/{subtotalAcumulado:F2}");
                 Console.WriteLine("==============================");
+            }
+
+            if (carrito.Count > 0)
+            {
+                decimal totalFinal = 0;
+                foreach (Producto item in carrito)
+                {
+                    totalFinal += item.CalcularSubtotal();
+                }
+
+                Console.WriteLine("\nSeleccione el método de pago:");
+                Console.WriteLine("1. Efectivo");
+                Console.WriteLine("2. Tarjeta");
+                Console.Write("Opción: ");
+                string metodo = Console.ReadLine().Trim();
+
+                IPago formaDePago = null;
+
+                if (metodo == "1")
+                {
+                    formaDePago = new PagoEfectivo();
+                }
+                else if (metodo == "2")
+                {
+                    formaDePago = new PagoTarjeta();
+                }
+                else
+                {
+                    Console.WriteLine("Método inválido.");
+                    return;
+                }
+
+                bool exito = formaDePago.ProcesarPago(totalFinal);
+
+                if (exito)
+                {
+                    Console.WriteLine("\n¡Compra finalizada exitosamente!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No se realizaron compras.");
             }
         }
     }

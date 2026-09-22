@@ -4,7 +4,7 @@
     {
         public bool EsCaliente { get; set; }
 
-        public Comida(string nombre, decimal precio, int cantidad, bool esCaliente = true)
+        public Comida(string nombre, decimal precio, int cantidad, bool esCaliente)
             : base(nombre, precio, cantidad)
         {
             EsCaliente = esCaliente;
@@ -12,7 +12,7 @@
 
         public override string ObtenerDetalle()
         {
-            string estado = EsCaliente ? "Caliente" : "Frío/Ambiente";
+            string estado = EsCaliente ? "Caliente" : "Frío";
             return $"[Comida] ({Cantidad}) {Nombre} [{estado}] -> Subtotal: S/{CalcularSubtotal():F2}";
         }
     }
