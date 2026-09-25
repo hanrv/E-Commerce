@@ -9,26 +9,28 @@ namespace ConsoleApp_07_09_2026.Clases
     /// </summary>
     public class PagoTarjeta : IPago
     {
-        private readonly ILectorConsola _lectorConsola;
+        private readonly IEntradaConsola _entradaConsola;
+        private readonly ISalidaConsola _salidaConsola;
 
-        public PagoTarjeta(ILectorConsola lectorConsola)
+        public PagoTarjeta(IEntradaConsola entradaConsola, ISalidaConsola salidaConsola)
         {
-            _lectorConsola = lectorConsola;
+            _entradaConsola = entradaConsola;
+            _salidaConsola = salidaConsola;
         }
 
         public bool ProcesarPago(decimal monto)
         {
-            _lectorConsola.EscribirLinea($"\nMonto a cobrar en tarjeta: S/{monto:F2}");
-            _lectorConsola.Escribir("Ingrese los 16 dígitos de su tarjeta: ");
-            string tarjeta = _lectorConsola.LeerLinea();
+            _salidaConsola.EscribirLinea($"\nMonto a cobrar en tarjeta: S/{monto:F2}");
+            _salidaConsola.Escribir("Ingrese los 16 dígitos de su tarjeta: ");
+            string tarjeta = _entradaConsola.LeerLinea();
 
             if (tarjeta.Length == 16)
             {
-                _lectorConsola.EscribirLinea("Conectando con el banco... ¡Cobro aprobado!");
+                _salidaConsola.EscribirLinea("Conectando con el banco... ¡Cobro aprobado!");
                 return true;
             }
 
-            _lectorConsola.EscribirLinea("Número de tarjeta inválido.");
+            _salidaConsola.EscribirLinea("Número de tarjeta inválido.");
             return false;
         }
     }

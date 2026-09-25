@@ -9,27 +9,29 @@ namespace ConsoleApp_07_09_2026.Clases
     /// </summary>
     public class PagoEfectivo : IPago
     {
-        private readonly ILectorConsola _lectorConsola;
+        private readonly IEntradaConsola _entradaConsola;
+        private readonly ISalidaConsola _salidaConsola;
 
-        public PagoEfectivo(ILectorConsola lectorConsola)
+        public PagoEfectivo(IEntradaConsola entradaConsola, ISalidaConsola salidaConsola)
         {
-            _lectorConsola = lectorConsola;
+            _entradaConsola = entradaConsola;
+            _salidaConsola = salidaConsola;
         }
 
         public bool ProcesarPago(decimal monto)
         {
-            _lectorConsola.EscribirLinea($"\nMonto a pagar: S/{monto:F2}");
-            _lectorConsola.Escribir("Ingrese la cantidad con la que paga: S/");
-            decimal billete = _lectorConsola.LeerDecimal();
+            _salidaConsola.EscribirLinea($"\nMonto a pagar: S/{monto:F2}");
+            _salidaConsola.Escribir("Ingrese la cantidad con la que paga: S/");
+            decimal billete = _entradaConsola.LeerDecimal();
 
             if (billete >= monto)
             {
                 decimal vuelto = billete - monto;
-                _lectorConsola.EscribirLinea($"Pago en efectivo aceptado. Su vuelto es: S/{vuelto:F2}");
+                _salidaConsola.EscribirLinea($"Pago en efectivo aceptado. Su vuelto es: S/{vuelto:F2}");
                 return true;
             }
 
-            _lectorConsola.EscribirLinea("El dinero entregado no alcanza.");
+            _salidaConsola.EscribirLinea("El dinero entregado no alcanza.");
             return false;
         }
     }
